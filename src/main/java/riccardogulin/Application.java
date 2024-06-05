@@ -4,9 +4,11 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import riccardogulin.dao.BlogsDAO;
+import riccardogulin.dao.CategoriesDAO;
 import riccardogulin.dao.DocumentsDAO;
 import riccardogulin.dao.UsersDAO;
 import riccardogulin.entities.BlogPost;
+import riccardogulin.entities.Category;
 import riccardogulin.entities.Document;
 import riccardogulin.entities.User;
 
@@ -21,6 +23,7 @@ public class Application {
 		UsersDAO ud = new UsersDAO(em);
 		DocumentsDAO dd = new DocumentsDAO(em);
 		BlogsDAO bd = new BlogsDAO(em);
+		CategoriesDAO cd = new CategoriesDAO(em);
 
 		User aldo = new User("Aldo", "Baglio");
 		User giovanni = new User("Giovanni", "Storti");
@@ -63,6 +66,33 @@ public class Application {
 
 		System.out.println("------------------------- BIDIREZIONALITA' -----------------------");
 		aldoFromDB.getBlogPostList().forEach(System.out::println);
+
+
+		// **************************************** Many to Many ************************************
+		Category backend = new Category("Backend");
+		Category frontend = new Category("Frontend");
+		Category oop = new Category("OOP");
+		Category javascript = new Category("JS");
+		Category fullstack = new Category("Fullstack");
+/*		cd.save(backend);
+		cd.save(frontend);
+		cd.save(oop);
+		cd.save(javascript);
+		cd.save(fullstack);*/
+
+		/*Category backendFromDB = cd.findById("689f6e7c-42ec-4ff3-98d6-fbf6d50f70d3");
+		Category oopFromDB = cd.findById("b6811f33-8279-48ad-9109-d7d293b02a59");
+
+		javaFromDB.setCategories(new ArrayList<>(Arrays.asList(backendFromDB, oopFromDB)));*/
+		// bd.save(javaFromDB);
+
+		System.out.println("Categorie del blog 'Java'");
+		javaFromDB.getCategories().forEach(category -> System.out.println(category.getName()));
+
+		Category backendFromDB = cd.findById("689f6e7c-42ec-4ff3-98d6-fbf6d50f70d3");
+		System.out.println("Blogs della categoria 'Backend'");
+		backendFromDB.getBlogPostList().forEach(blogPost -> System.out.println(blogPost.getTitle()));
+
 
 	}
 }
