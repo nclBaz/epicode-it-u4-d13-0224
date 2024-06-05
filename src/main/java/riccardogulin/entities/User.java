@@ -2,6 +2,7 @@ package riccardogulin.entities;
 
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -24,12 +25,25 @@ public class User {
 	// mappedBy serve per specificare il nome dell'attributo dell'altra classe a cui ci colleghiamo
 	// N.B. mappedBy NON CREA NESSUNA NUOVA COLONNA NELLA TABELLA USER
 
+	@OneToMany(mappedBy = "author") // <-- Così la relazione diventa bidirezionale
+	private List<BlogPost> blogPostList;
+	// La bidirezionalità mi serve per poter, dato un utente, risalire alla lista di tutti i blog che ha scritto
+
+
 	public User() {
 	}
 
 	public User(String firstName, String lastName) {
 		this.firstName = firstName;
 		this.lastName = lastName;
+	}
+
+	public List<BlogPost> getBlogPostList() {
+		return blogPostList;
+	}
+
+	public void setBlogPostList(List<BlogPost> blogPostList) {
+		this.blogPostList = blogPostList;
 	}
 
 	public Document getDocument() {
@@ -66,7 +80,9 @@ public class User {
 				"id=" + id +
 				", firstName='" + firstName + '\'' +
 				", lastName='" + lastName + '\'' +
-				", document=" + document +
 				'}';
 	}
+	// ATTENZIONE! Se la relazione è bidirezionale ed inseriamo un riferimento
+	// nel toString al document e nel toString del document un riferimento allo user,
+	// otterremo come risultato uno STACKOVERFLOW ERROR!
 }

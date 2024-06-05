@@ -3,8 +3,10 @@ package riccardogulin;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+import riccardogulin.dao.BlogsDAO;
 import riccardogulin.dao.DocumentsDAO;
 import riccardogulin.dao.UsersDAO;
+import riccardogulin.entities.BlogPost;
 import riccardogulin.entities.Document;
 import riccardogulin.entities.User;
 
@@ -18,6 +20,7 @@ public class Application {
 		EntityManager em = emf.createEntityManager();
 		UsersDAO ud = new UsersDAO(em);
 		DocumentsDAO dd = new DocumentsDAO(em);
+		BlogsDAO bd = new BlogsDAO(em);
 
 		User aldo = new User("Aldo", "Baglio");
 		User giovanni = new User("Giovanni", "Storti");
@@ -42,6 +45,24 @@ public class Application {
 		// se non viene chiamato il metodo .save (che fa una persist) non fa parte del Persistence Context e quindi non potrà essere usato
 		Document aldoDoc = new Document("123iuh32", LocalDate.now(), LocalDate.now().plusYears(5), "Italy", aldoFromDB);
 		// Invece se io usassi aldoFromDb, che è il risultato di una find, esso andrebbe bene
-		dd.save(aldoDoc);
+		// dd.save(aldoDoc);
+
+		Document aldoDocFromDB = dd.findById("cac99c3b-b35a-4e12-938f-65c33accae11");
+		System.out.println(aldoDocFromDB);
+		System.out.println(aldoDocFromDB.getUser());
+
+
+		// **************************************** 1 to Many ************************************
+		BlogPost java = new BlogPost("Java", "Java è bellissimo (sto mentendo)", aldoFromDB);
+		BlogPost react = new BlogPost("React", "React è bellissimo (ma non come Java)", aldoFromDB);
+		/*bd.save(java);*/
+		/*bd.save(react);*/
+
+		BlogPost javaFromDB = bd.findById("37553274-ca00-49df-aec8-0de911077f6a");
+		System.out.println(javaFromDB);
+
+		System.out.println("------------------------- BIDIREZIONALITA' -----------------------");
+		aldoFromDB.getBlogPostList().forEach(System.out::println);
+
 	}
 }
